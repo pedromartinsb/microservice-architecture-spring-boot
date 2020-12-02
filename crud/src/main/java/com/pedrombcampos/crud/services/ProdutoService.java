@@ -10,20 +10,24 @@ import org.springframework.stereotype.Service;
 import com.pedrombcampos.crud.data.vo.ProdutoVO;
 import com.pedrombcampos.crud.entity.Produto;
 import com.pedrombcampos.crud.exception.ResourceNotFoundException;
+import com.pedrombcampos.crud.message.ProdutoSendMessage;
 import com.pedrombcampos.crud.repository.ProdutoRepository;
 
 @Service
 public class ProdutoService {
 
 	private final ProdutoRepository produtoRepository;
+	private final ProdutoSendMessage produtoSendMessage;
 
 	@Autowired
-	public ProdutoService(ProdutoRepository produtoRepository) {
+	public ProdutoService(ProdutoRepository produtoRepository, ProdutoSendMessage produtoSendMessage) {
 		this.produtoRepository = produtoRepository;
+		this.produtoSendMessage = produtoSendMessage;
 	}
 	
 	public ProdutoVO create(ProdutoVO produtoVO) {
 		ProdutoVO produtoVORetorno = ProdutoVO.create(produtoRepository.save(Produto.create(produtoVO)));
+		produtoSendMessage.sendMessage(produtoVORetorno);
 		return produtoVORetorno;
 	}
 	
